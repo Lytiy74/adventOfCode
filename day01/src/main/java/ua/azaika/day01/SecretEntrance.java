@@ -10,11 +10,6 @@ import java.util.Queue;
 
 public class SecretEntrance {
 
-    public static final int START_POSITION = 50;
-    public static final int RIGHT_EDGE = 99;
-    public static final int LEFT_EDGE = 0;
-    public static final int MODULO_BASE = 100;
-
     public static void main(String[] args) {
         InputStream inputStream = SecretEntrance.class.getResourceAsStream("/input.txt");
         Queue<String> steps = readInputStreamToQueue(inputStream);
@@ -27,38 +22,19 @@ public class SecretEntrance {
 
     private int getAnswer(Queue<String> steps) {
         int answer = 0;
-        int position = START_POSITION;
-
+        int current = 50;
         for (String step : steps) {
-            char direction = step.charAt(0);
-            short stepsCount = Short.parseShort(step.substring(1));
-            switch (direction) {
-                case 'R':
-                    position += stepsCount;
-                    break;
-                case 'L':
-                    position -= stepsCount;
-                    break;
+            int stepsCount = Integer.parseInt(step.substring(1));
+            for (int i = 0; i < stepsCount; i++) {
+                if (step.startsWith("L")) {
+                    current = (current - 1 + 100) % 100;
+                } else {
+                    current = (current + 1) % 100;
+                }
+                if (current == 0) answer++;
             }
-
-            position = normalizePosition(position);
-
-            if (position == 0) {
-                answer++;
-            }
-
-            System.out.println("The dial is rotated " + step + " to point at " + position);
         }
         return answer;
-    }
-
-    private int normalizePosition(int position) {
-        if (position > RIGHT_EDGE) {
-            position = position % MODULO_BASE;
-        } else if (position < LEFT_EDGE) {
-            position = (position % MODULO_BASE + MODULO_BASE) % MODULO_BASE;
-        }
-        return position;
     }
 
     public static Queue<String> readInputStreamToQueue(InputStream inputStream) {
